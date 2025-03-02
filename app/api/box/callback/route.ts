@@ -41,7 +41,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const data: BoxTokenResponse = await response.json();
 
     // アクセストークンを Cookie に保存
-    const responseWithCookie = NextResponse.redirect("http://localhost:3000/");
+    const responseWithCookie = NextResponse.redirect(
+      process.env.NEXT_PUBLIC_APP_URL!
+    );
     responseWithCookie.cookies.set("box_access_token", data.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
