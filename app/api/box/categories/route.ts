@@ -41,3 +41,39 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+export async function POST(request: NextRequest) {
+  try {
+    const accessToken = request.cookies.get("box_access_token")?.value;
+
+    if (!accessToken) {
+      return NextResponse.json(
+        { error: "Unauthorized: Access token is missing" },
+        { status: 401 }
+      );
+    }
+
+    const client = sdk.getBasicClient(accessToken);
+    const { name } = await request.json();
+
+    if (!name) {
+      return NextResponse.json(
+        { error: "Category name is required" },
+        { status: 400 }
+      );
+    }
+
+    // Box API を使用して新しいフォルダを作成
+    const folderId = "309674553231";
+    const newFolder = await client.folders.create(folderId, name);
+
+    return NextResponse.json({
+      category: { id: newFolder.id, name: newFolder.name },
+    });
+  } catch (error) {
+    console.error("Error creating category:", error);
+    return NextResponse.json(
+      { error: "Failed to create category" },
+      { status: 500 }
+    );
+  }
+}

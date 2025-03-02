@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest): NextResponse {
-  const accessToken = request.cookies.get("box_access_token"); // Cookie からアクセストークンを取得
-  console.log("accessToken", accessToken);
+  const accessToken = request.cookies.get("box_access_token");
 
   // アクセストークンが存在しない場合、Box の認証ページにリダイレクト
   if (!accessToken) {
     const clientId = process.env.BOX_CLIENT_ID!;
     const redirectUri = process.env.BOX_REDIRECT_URI!;
-    console.log("redirectUri", redirectUri);
 
     const authUrl = `https://account.box.com/api/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(
       redirectUri
@@ -23,5 +21,5 @@ export function middleware(request: NextRequest): NextResponse {
 
 // Middleware を適用するルートを指定
 export const config = {
-  matcher: ["/protected/:path*", "/admin/:path*"], // 認証が必要なルートを指定
+  matcher: ["/protected/:path*", "/admin/:path*", "/faq"],
 };

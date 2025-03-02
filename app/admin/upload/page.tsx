@@ -1,6 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import {
+  Typography,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  TextField,
+  Box,
+  ThemeProvider,
+  CssBaseline,
+  createTheme,
+} from "@mui/material";
 
 interface Category {
   id: string;
@@ -12,8 +25,9 @@ export default function UploadPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [categoryError, setCategoryError] = useState<string | null>(null);
 
-  // カテゴリ一覧を取得
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -56,44 +70,136 @@ export default function UploadPage() {
       }
 
       const data = await response.json();
-      setMessage(`ファイル「${data.file.name}」をアップロードしました。`);
+      setMessage(
+        `「${data.file.entries[0].parent.name}」にファイルをアップロードしました。`
+      );
     } catch (error) {
       console.error(error);
       setMessage("ファイルのアップロードに失敗しました。");
     }
   };
 
+  // 新しいカテゴリを追加
+  const handleAddCategory = async () => {
+    setCategoryError(null);
+
+    if (!newCategoryName.trim()) {
+      setCategoryError("カテゴリ名を入力してください。");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/box/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: newCategoryName,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add category");
+      }
+
+      const data = await response.json();
+
+      setCategories((prevCategories) => [...prevCategories, data.category]);
+      setNewCategoryName("");
+    } catch (err) {
+      setCategoryError("カテゴリの追加に失敗しました。");
+      console.error(err);
+    }
+  };
+
+  const theme = createTheme({
+    palette: {
+      mode: "light",
+    },
+  });
+
   return (
-    <div>
-      <h1>FAQ アップロード</h1>
-      {message && <p>{message}</p>}
-      <form onSubmit={handleUpload}>
-        <div>
-          <label htmlFor="category">カテゴリを選択:</label>
-          <select
-            id="category"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ padding: "20px", maxWidth: "600px", margin: "0 auto" }}>
+        <Typography variant="h4" gutterBottom>
+          FAQ アップロード
+        </Typography>
+        {message && (
+          <Typography
+            variant="body1"
+            sx={{
+              marginBottom: "20px",
+              color: message.includes("失敗") ? "red" : "green",
+            }}
           >
-            <option value="">-- カテゴリを選択 --</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="file">CSV ファイルを選択:</label>
-          <input
-            id="file"
-            type="file"
-            accept=".csv"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
-        </div>
-        <button type="submit">アップロード</button>
-      </form>
-    </div>
+            {message}
+          </Typography>
+        )}
+        <form onSubmit={handleUpload}>
+          {/* カテゴリ選択 */}
+          <FormControl fullWidth sx={{ marginBottom: "20px" }}>
+            <InputLabel id="category-label">カテゴリを選択</InputLabel>
+            <Select
+              labelId="category-label"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <MenuItem value="">
+                <em>-- カテゴリを選択 --</em>
+              </MenuItem>
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          {/* ファイル選択 */}
+          <FormControl fullWidth sx={{ marginBottom: "20px" }}>
+            <TextField
+              type="file"
+              inputProps={{ accept: ".csv" }}
+              onChange={(e) =>
+                setFile((e.target as HTMLInputElement).files?.[0] || null)
+              }
+            />
+          </FormControl>
+
+          {/* アップロードボタン */}
+          <Button type="submit" variant="contained" color="primary" fullWidth>
+            アップロード
+          </Button>
+        </form>
+
+        <hr className="text-gray-300" style={{ margin: "40px 0" }} />
+
+        {/* 新しいカテゴリを追加 */}
+        <Typography className="text-gray-600" variant="h5" gutterBottom>
+          新しいカテゴリを追加
+        </Typography>
+        <TextField
+          fullWidth
+          label="カテゴリ名"
+          value={newCategoryName}
+          onChange={(e) => setNewCategoryName(e.target.value)}
+          style={{ marginBottom: "20px" }}
+        />
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleAddCategory}
+        >
+          カテゴリを追加
+        </Button>
+        {categoryError && (
+          <div style={{ marginTop: "20px", color: "red" }}>
+            <Typography>{categoryError}</Typography>
+          </div>
+        )}
+      </Box>
+    </ThemeProvider>
   );
 }

@@ -22,7 +22,11 @@ export default function ProtectedPage() {
         const data = await response.json();
         setFiles(data.files);
       } catch (err) {
-        setError(err.message);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       }
     };
 
