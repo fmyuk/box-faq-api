@@ -21,5 +21,5 @@ export function middleware(request: NextRequest): NextResponse {
 
 // Middleware を適用するルートを指定
 export const config = {
-  matcher: ["/protected/:path*", "/admin/:path*", "/faq"],
+  matcher: ["/", "/protected/:path*", "/admin/:path*", "/faq"],
 };
