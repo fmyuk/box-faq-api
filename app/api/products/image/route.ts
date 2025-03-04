@@ -47,7 +47,6 @@ export async function GET(req: NextRequest) {
     // レスポンスヘッダーを設定
     const headers = new Headers({
       "Content-Type": "image/jpeg",
-      "Cache-Control": "public, max-age=31536000, immutable",
     });
 
     return new NextResponse(fileStream, { headers });

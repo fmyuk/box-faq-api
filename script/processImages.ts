@@ -3,15 +3,15 @@ import { createClient } from "@supabase/supabase-js";
 
 // Box API の設定
 const sdk = new BoxSDK({
-  clientID: "qr0gtbefwas32jzl2z4nzqwviwnbnw83",
-  clientSecret: "TfZ4QZ75h6IGHDkQi3ghCyv5Qm2YD9Gt",
+  clientID: process.env.BOX_CLIENT_ID!,
+  clientSecret: process.env.BOX_CLIENT_SECRET!,
 });
-const client = sdk.getBasicClient("C9z87hS8XZ4G1j3rM04rTGUTZXB3WyNB");
+const client = sdk.getBasicClient(process.env.BOX_ACCESS_TOKEN!);
 
 // Supabase の設定
 const supabase = createClient(
-  "https://bofmgopsumilxvydoivl.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvZm1nb3BzdW1pbHh2eWRvaXZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEwNTA0MDQsImV4cCI6MjA1NjYyNjQwNH0.6m1iv6ZzcXXSKkKwDBzJ5fy9DfnQPSMpNSJWhaX-oZM"
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_KEY!
 );
 
 // Box フォルダ ID
