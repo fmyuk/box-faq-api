@@ -1,0 +1,6 @@
+id,product_code,name,description
+2,12345,docker,container
+3,111111,Jenkins,CICD
+4,161274,Terminal,CLI
+5,222222,React,Framework
+6,333333,Java,Program

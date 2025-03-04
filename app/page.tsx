@@ -73,6 +73,32 @@ export default function HomePage() {
           </Button>
         </Link>
       </Box>
+
+      <Divider sx={{ width: "100%", maxWidth: "600px", margin: "40px 0" }} />
+
+      {/* 商品一覧 */}
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: "600px",
+          padding: "20px",
+          backgroundColor: "white",
+          borderRadius: "8px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Typography className="text-gray-600" variant="h5" gutterBottom>
+          商品一覧
+        </Typography>
+        <Typography className="text-gray-600" variant="body1" gutterBottom>
+          商品一覧の機能にアクセスするには、以下のリンクをクリックしてください。
+        </Typography>
+        <Link href="/product" passHref>
+          <Button variant="contained" color="success" fullWidth>
+            商品一覧ページ
+          </Button>
+        </Link>
+      </Box>
     </Box>
   );
 }
