@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     return new NextResponse(fileStream, {
       headers: {
         "Content-Type": "text/csv",
-        "Content-Disposition": `attachment; filename="\${csvFile.name}"`,
+        "Content-Disposition": `attachment; filename="${csvFile.name}"`,
       },
     });
   } catch (error) {

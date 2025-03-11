@@ -63,7 +63,7 @@ export default function ProductList() {
               {/* 商品画像を取得 */}
               <CardMedia
                 component="img"
-                src={`/api/products/image?productCode=\${product.product_code}`}
+                src={`/api/products/image?productCode=${product.product_code}`}
                 alt={product.name}
                 className="mx-auto object-cover"
                 style={{
